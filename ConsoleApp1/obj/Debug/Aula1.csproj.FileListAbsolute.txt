@@ -1,0 +1,7 @@
+C:\Users\Hugo\Documents\GitHub\Logica de Computação\ConsoleApp1\bin\Debug\ConsoleApp1.exe.config
+C:\Users\Hugo\Documents\GitHub\Logica de Computação\ConsoleApp1\bin\Debug\ConsoleApp1.exe
+C:\Users\Hugo\Documents\GitHub\Logica de Computação\ConsoleApp1\bin\Debug\ConsoleApp1.pdb
+C:\Users\Hugo\Documents\GitHub\Logica de Computação\ConsoleApp1\obj\Debug\Aula1.csprojAssemblyReference.cache
+C:\Users\Hugo\Documents\GitHub\Logica de Computação\ConsoleApp1\obj\Debug\Aula1.csproj.CoreCompileInputs.cache
+C:\Users\Hugo\Documents\GitHub\Logica de Computação\ConsoleApp1\obj\Debug\ConsoleApp1.exe
+C:\Users\Hugo\Documents\GitHub\Logica de Computação\ConsoleApp1\obj\Debug\ConsoleApp1.pdb
