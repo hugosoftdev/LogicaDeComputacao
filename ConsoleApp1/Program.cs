@@ -22,9 +22,9 @@ namespace ConsoleApp1
             }
 
 
-            if(text[0] == '+')
+            if(text[0] == '+' || (text[0] == '-'))
             {
-                Console.WriteLine("Não é permitido começar uma conta com o sinal +");
+                Console.WriteLine("Não é permitido começar uma conta com sinal");
                 throw new ArgumentException();
             }
         }
@@ -39,10 +39,7 @@ namespace ConsoleApp1
                 List<int> operations = new List<int>();
 
                 CheckInvalidFormat(input);
-                if(input[0] != '-')
-                {
-                    operations.Add(1);
-                }
+                operations.Add(1); //para ja começar somando o primeiro número
 
                 foreach (char c in input)
                 {
@@ -63,6 +60,12 @@ namespace ConsoleApp1
                 if(words.Length < 2)
                 {
                     Console.WriteLine("Uma conta precisa de 2 números ou mais para realizar a operação");
+                    throw new ArgumentException();
+                }
+
+                if(operations.Count > words.Length)
+                {
+                    Console.WriteLine("Quantidade inválida de operadores (+ , -)");
                     throw new ArgumentException();
                 }
 
