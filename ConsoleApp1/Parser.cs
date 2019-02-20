@@ -12,11 +12,43 @@ namespace ConsoleApp1
         
         public static int parseExpression()
         {
-            while (tokens.actual.type != TokenType.EOF)
+
+            int output = 0;
+            tokens.selectNext();
+            if(tokens.actual.type == TokenType.INT) {
+                output += tokens.actual.value;
+                tokens.selectNext();
+                while(tokens.actual.type == TokenType.PLUS || tokens.actual.type == TokenType.MINUS)
+                {
+                    if(tokens.actual.type == TokenType.PLUS)
+                    {
+                        tokens.selectNext();
+                        if (tokens.actual.type == TokenType.INT)
+                        {
+                            output += tokens.actual.value;
+                        } else
+                        {
+                            throw new Exception("Depois do operador + é necessário um número");
+                        }
+                    } else if(tokens.actual.type == TokenType.MINUS)
+                    {
+                        tokens.selectNext();
+                        if (tokens.actual.type == TokenType.INT)
+                        {
+                            output -= tokens.actual.value;
+                        }
+                        else
+                        {
+                            throw new Exception("Depois do operador - é necessário um número");
+                        }
+                    }
+                    tokens.selectNext();
+                }
+            } else
             {
-                tokens.selectNext();         
+                throw new Exception("A conta deve começar com um número");
             }
-            return 10;
+            return output;
         }
 
         public static int run(string input)
