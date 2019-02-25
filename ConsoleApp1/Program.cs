@@ -17,6 +17,7 @@ namespace ConsoleApp1
         {
             Console.WriteLine("Insira a expressão: ");
             string input = Console.ReadLine();
+            input = PrePro.filter(input);
             Console.WriteLine("\n");
             try
             {

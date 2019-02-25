@@ -11,7 +11,7 @@ namespace ConsoleApp1
         public string origin { get; set; }
         public int position { get; set; }
         public Token actual { get; set; }
-        private List<char> alphabet = new List<char>() {'0','1','2','3','4','5','6','7','8','9','+','-' };
+        private List<char> alphabet = new List<char>() {'0','1','2','3','4','5','6','7','8','9','+','-', '*', '/' };
 
         public Token selectNext()
         {
@@ -32,7 +32,7 @@ namespace ConsoleApp1
 
                     if(buffer.Length > 0)
                     {
-                        if (origin[iterator] == '-' || origin[iterator] == '+')
+                        if (origin[iterator] == '-' || origin[iterator] == '+' || origin[iterator] == '*' || origin[iterator] == '/')
                         {
                             actual.type = TokenType.INT;
                             actual.value =Int32.Parse(buffer);
@@ -57,6 +57,20 @@ namespace ConsoleApp1
                     if(origin[iterator] == '+')
                     {
                         actual.type = TokenType.PLUS;
+                        position = iterator + 1;
+                        return actual;
+                    }
+
+                    if (origin[iterator] == '/')
+                    {
+                        actual.type = TokenType.DIVIDE;
+                        position = iterator + 1;
+                        return actual;
+                    }
+
+                    if (origin[iterator] == '*')
+                    {
+                        actual.type = TokenType.MULTIPLY;
                         position = iterator + 1;
                         return actual;
                     }
