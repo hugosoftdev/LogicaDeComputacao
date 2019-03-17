@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace ConsoleApp1
 {
 
-    public enum TokenType { INT, PLUS, MINUS, EOF, MULTIPLY, DIVIDE }
+    public enum TokenType { INT, PLUS, MINUS, EOF, MULTIPLY, DIVIDE, PARENTHESESBEGIN, PARENTHESESEND }
 
     public class Token
     {

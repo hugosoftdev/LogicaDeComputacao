@@ -19,62 +19,69 @@ namespace ConsoleApp1
             {
                 if(tokens.actual.type == TokenType.PLUS)
                 {
+                    tokens.selectNext();
                     output += parseTerm();
 
                 } else if(tokens.actual.type == TokenType.MINUS)
                 {
+                    tokens.selectNext();
                     output -= parseTerm();
                 }
-            }
-
-            if(tokens.actual.type != TokenType.EOF)
-            {
-                throw new Exception("Entrada inválida, a cadeia terminou sem um EOF");
             }
             return output;
         }
 
         public static int parseTerm()
         {
-
             int output = 0;
-            tokens.selectNext();
-            if (tokens.actual.type == TokenType.INT)
+            output += parseFactor();
+            while (tokens.actual.type == TokenType.DIVIDE || tokens.actual.type == TokenType.MULTIPLY)
             {
-                output += tokens.actual.value;
-                tokens.selectNext();
-                while (tokens.actual.type == TokenType.MULTIPLY || tokens.actual.type == TokenType.DIVIDE)
+                if (tokens.actual.type == TokenType.MULTIPLY)
                 {
-                    if (tokens.actual.type == TokenType.MULTIPLY)
-                    {
-                        tokens.selectNext();
-                        if (tokens.actual.type == TokenType.INT)
-                        {
-                            output *= tokens.actual.value;
-                        }
-                        else
-                        {
-                            throw new Exception("Depois do operador * é necessário um número");
-                        }
-                    }
-                    else if (tokens.actual.type == TokenType.DIVIDE)
-                    {
-                        tokens.selectNext();
-                        if (tokens.actual.type == TokenType.INT)
-                        {
-                            output /= tokens.actual.value;
-                        }
-                        else
-                        {
-                            throw new Exception("Depois do operador / é necessário um número");
-                        }
-                    }
                     tokens.selectNext();
+                    output *= parseFactor();
+
+                }
+                else if (tokens.actual.type == TokenType.DIVIDE)
+                {
+                    tokens.selectNext();
+                    output /= parseFactor();
                 }
             }
-            else
+            return output;
+        }
+
+        public static int parseFactor()
+        {
+            int output = 0;       
+            if(tokens.actual.type == TokenType.INT)
             {
-                throw new Exception("A conta deve começar com um número");
+                output = tokens.actual.value;
+                tokens.selectNext();
+            }  else if(tokens.actual.type == TokenType.PARENTHESESBEGIN)
+            {
+                tokens.selectNext();
+                output += parseExpression();
+                if(tokens.actual.type != TokenType.PARENTHESESEND)
+                {
+                    throw new Exception("Invalid Syntax - Missing )");
+                }
+                else
+                {
+                    tokens.selectNext();
+                }
+            } else if(tokens.actual.type == TokenType.MINUS)
+            {
+                tokens.selectNext();
+                output -= parseFactor();
+            } else if(tokens.actual.type == TokenType.PLUS)
+            {
+                tokens.selectNext();
+                output += parseFactor();
+            } else
+            {
+                throw new Exception("Unnespected Token");
             }
             return output;
         }
@@ -82,7 +89,13 @@ namespace ConsoleApp1
         public static int run(string input)
         {
             Parser.tokens = new Tokenizer() { origin = input, position = 0, actual = new Token() };
-            return parseExpression();
+            tokens.selectNext();
+            int output = parseExpression();
+            if (tokens.actual.type != TokenType.EOF)
+            {
+                throw new Exception("Entrada inválida, a cadeia terminou sem um EOF");
+            }
+            return output;
         }
     }
 }
