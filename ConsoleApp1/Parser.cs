@@ -10,59 +10,41 @@ namespace ConsoleApp1
     {
         public static Tokenizer tokens { get; set; }
         
-        public static int parseExpression()
+        public static Node parseExpression()
         {
-
-            int output = 0;
-            output += parseTerm();
+            Node tree = parseTerm();
             while(tokens.actual.type == TokenType.PLUS || tokens.actual.type == TokenType.MINUS)
             {
-                if(tokens.actual.type == TokenType.PLUS)
-                {
-                    tokens.selectNext();
-                    output += parseTerm();
-
-                } else if(tokens.actual.type == TokenType.MINUS)
-                {
-                    tokens.selectNext();
-                    output -= parseTerm();
-                }
+                tree = new BinOp(tokens.actual.Copy(), new List<Node>() { tree });
+                tokens.selectNext();
+                tree.children.Add(parseTerm());
             }
-            return output;
+            return tree;
         }
 
-        public static int parseTerm()
+        public static Node parseTerm()
         {
-            int output = 0;
-            output += parseFactor();
-            while (tokens.actual.type == TokenType.DIVIDE || tokens.actual.type == TokenType.MULTIPLY)
+            Node tree = parseFactor();
+            while (tokens.actual.type == TokenType.MULTIPLY || tokens.actual.type == TokenType.DIVIDE)
             {
-                if (tokens.actual.type == TokenType.MULTIPLY)
-                {
-                    tokens.selectNext();
-                    output *= parseFactor();
-
-                }
-                else if (tokens.actual.type == TokenType.DIVIDE)
-                {
-                    tokens.selectNext();
-                    output /= parseFactor();
-                }
+                tree = new BinOp(tokens.actual.Copy(), new List<Node>() { tree });
+                tokens.selectNext();
+                tree.children.Add(parseFactor());
             }
-            return output;
+            return tree;
         }
 
-        public static int parseFactor()
+        public static Node parseFactor()
         {
-            int output = 0;       
+            Node output;       
             if(tokens.actual.type == TokenType.INT)
             {
-                output = tokens.actual.value;
+                output = new IntVal(tokens.actual.Copy());
                 tokens.selectNext();
             }  else if(tokens.actual.type == TokenType.PARENTHESESBEGIN)
             {
                 tokens.selectNext();
-                output += parseExpression();
+                output = parseExpression();
                 if(tokens.actual.type != TokenType.PARENTHESESEND)
                 {
                     throw new Exception("Invalid Syntax - Missing )");
@@ -71,31 +53,28 @@ namespace ConsoleApp1
                 {
                     tokens.selectNext();
                 }
-            } else if(tokens.actual.type == TokenType.MINUS)
+            } else if(tokens.actual.type == TokenType.MINUS || tokens.actual.type == TokenType.PLUS)
             {
+                Token temp = tokens.actual.Copy();
                 tokens.selectNext();
-                output -= parseFactor();
-            } else if(tokens.actual.type == TokenType.PLUS)
-            {
-                tokens.selectNext();
-                output += parseFactor();
-            } else
+                output = new UnOp(temp, new List<Node>() { parseFactor() });
+            }else
             {
                 throw new Exception("Unnespected Token");
             }
             return output;
         }
 
-        public static int run(string input)
+        public static Node run(string input)
         {
             Parser.tokens = new Tokenizer() { origin = input, position = 0, actual = new Token() };
             tokens.selectNext();
-            int output = parseExpression();
+            Node tree = parseExpression();
             if (tokens.actual.type != TokenType.EOF)
             {
                 throw new Exception("Entrada inválida, a cadeia terminou sem um EOF");
             }
-            return output;
+            return tree;
         }
     }
 }

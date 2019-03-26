@@ -21,7 +21,7 @@ namespace ConsoleApp1
             Console.WriteLine("\n");
             try
             {
-                Console.WriteLine("Resultado: " + Parser.run(input));
+                Console.WriteLine("Resultado: " + Parser.run(input).Evaluate());
             } catch(Exception e)
             {
                 Console.WriteLine(e.Message);

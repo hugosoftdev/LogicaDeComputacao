@@ -15,7 +15,7 @@ namespace ConsoleApp1
 
         override public Object Evaluate()
         {
-            Token token = (Token)this.value;
+            Token token = (Token) this.value;
             return token.value;
         }
     }
