@@ -6,14 +6,17 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp1
 {
-    public class NoOp : Node
+    public class Print : Node
     {
-        public NoOp()
+        public Print(Token value, List<Node> children)
         {
+            this.value = value;
+            this.children = children;
         }
 
         override public Object Evaluate(SymbolTable st)
         {
+            Console.WriteLine(this.children.ElementAt(0).Evaluate(st));
             return null;
         }
     }

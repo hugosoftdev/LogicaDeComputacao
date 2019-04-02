@@ -13,10 +13,10 @@ namespace ConsoleApp1
             this.value = value;
         }
 
-        override public Object Evaluate()
+        override public Object Evaluate(SymbolTable st)
         {
             Token token = (Token) this.value;
-            return token.value;
+            return Int32.Parse(token.value.ToString());
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace ConsoleApp1
@@ -10,24 +11,27 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            MainLoop();
+            MainProgram();
         }
 
-        static void MainLoop()
+        static void MainProgram()
         {
-            Console.WriteLine("Insira a expressão: ");
-            string input = Console.ReadLine();
+            string path = "./input.vbs";
+            string input = File.ReadAllText(path);
+            Console.WriteLine(input);
+
             input = PrePro.filter(input);
             Console.WriteLine("\n");
             try
             {
-                Console.WriteLine("Resultado: " + Parser.run(input).Evaluate());
+                SymbolTable st = new SymbolTable();
+                Parser.run(input).Evaluate(st);
             } catch(Exception e)
             {
                 Console.WriteLine(e.Message);
             }
             Console.WriteLine("\n");
-            MainLoop();
+            System.Threading.Thread.Sleep(5000);
         }
     }
 }

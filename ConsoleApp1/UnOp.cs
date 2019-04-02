@@ -14,15 +14,15 @@ namespace ConsoleApp1
             this.children = children;
         }
 
-        override public Object Evaluate()
+        override public Object Evaluate(SymbolTable st)
         {
             Token token = (Token) this.value;
             if(token.type == TokenType.MINUS)
             {
-                return - (int) this.children.ElementAt(0).Evaluate();
+                return - (int) this.children.ElementAt(0).Evaluate(st);
             } else if (token.type == TokenType.PLUS)
             {
-                return (int) this.children.ElementAt(0).Evaluate();
+                return (int) this.children.ElementAt(0).Evaluate(st);
             }
             throw new Exception("Um Nó foi classificado como UnOp sem ser um token do tipo PLUS ou MINUS");
         }

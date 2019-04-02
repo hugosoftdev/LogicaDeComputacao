@@ -23,10 +23,40 @@ namespace ConsoleApp1
             {
                 if ((!string.IsNullOrEmpty(origin[iterator].ToString()))  && (!string.IsNullOrWhiteSpace(origin[iterator].ToString()))) 
                 {
-
-                    if (!alphabet.Contains(origin[iterator]))
+                    bool foundWord = false;
+                    if(buffer.Length == 0)
                     {
-                        throw new Exception(string.Format("Lexical Error -> '{0}' não faz parte do alfabeto", origin[iterator]));
+                        if (Char.IsLetter(origin[iterator]) || origin[iterator] == '_')
+                        {
+                            foundWord = true;
+                            buffer += origin[iterator];
+                            iterator += 1;
+                            while((iterator < origin.Length) && (Char.IsLetterOrDigit(origin[iterator]) || origin[iterator] == '_'))
+                            {
+                                buffer += origin[iterator];
+                                iterator += 1;
+                            }
+                        }
+                    }
+
+                    if (foundWord)
+                    {
+                        if(buffer == "BEGIN")
+                        {
+                            actual.type = TokenType.BEGIN;
+                        } else if (buffer == "END")
+                        {
+                            actual.type = TokenType.END;
+                        } else if (buffer.ToUpper() == "PRINT")
+                        {
+                            actual.type = TokenType.PRINT;
+                        } else
+                        {
+                            actual.type = TokenType.IDENTIFIER;
+                            actual.value = buffer;
+                        }
+                        position = iterator;
+                        return actual;
                     }
 
 
@@ -89,6 +119,13 @@ namespace ConsoleApp1
                         return actual;
                     }
 
+                    if (origin[iterator] == '=')
+                    {
+                        actual.type = TokenType.EQUAL;
+                        position = iterator + 1;
+                        return actual;
+                    }
+
                     iterator++;
 
                 } else
@@ -97,7 +134,13 @@ namespace ConsoleApp1
                     {
                         actual.type = TokenType.INT;
                         actual.value = Int32.Parse(buffer);
-                        position = iterator + 1;
+                        if((origin[iterator] == '\n') || origin[iterator] == '\r')
+                        {
+                            position = iterator;
+                        } else
+                        {
+                            position = iterator + 1;
+                        }             
                         return actual;
                     }
                     iterator++;

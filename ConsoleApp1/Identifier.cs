@@ -6,15 +6,18 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp1
 {
-    public class NoOp : Node
+    public class Identifier : Node
     {
-        public NoOp()
+        public Identifier(Token value)
         {
+            this.value = value;
         }
 
         override public Object Evaluate(SymbolTable st)
         {
-            return null;
+            Token token = (Token) this.value;
+            string key = (string) token.value;
+            return st.Get(key);
         }
     }
 }

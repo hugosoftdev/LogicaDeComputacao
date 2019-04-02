@@ -10,6 +10,6 @@ namespace ConsoleApp1
     {
         public Object value;
         public List<Node> children;
-        public abstract Object Evaluate(); //all classes that implement Animal must have a sound method
+        public abstract Object Evaluate(SymbolTable st); 
     }
 }

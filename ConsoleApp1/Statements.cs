@@ -6,14 +6,20 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp1
 {
-    public class NoOp : Node
+    public class Statements : Node
     {
-        public NoOp()
+        public Statements(Token value, List<Node> children)
         {
+            this.value = value;
+            this.children = children;
         }
 
         override public Object Evaluate(SymbolTable st)
         {
+            foreach(Node node in children)
+            {
+                node.Evaluate(st);
+            }
             return null;
         }
     }

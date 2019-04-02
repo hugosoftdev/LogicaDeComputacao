@@ -14,10 +14,10 @@ namespace ConsoleApp1
             this.children = children;
         }
 
-        override public Object Evaluate()
+        override public Object Evaluate(SymbolTable st)
         {
-            int firstNumber = (int)this.children.ElementAt(0).Evaluate();
-            int secondNumber = (int)this.children.ElementAt(1).Evaluate();
+            int firstNumber = (int)this.children.ElementAt(0).Evaluate(st);
+            int secondNumber = (int)this.children.ElementAt(1).Evaluate(st);
 
             Token token = (Token) this.value;
             if(token.type == TokenType.MINUS)
