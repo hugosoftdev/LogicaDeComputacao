@@ -19,7 +19,6 @@ namespace ConsoleApp1
             string path = "./input.vbs";
             string input = File.ReadAllText(path);
             Console.WriteLine(input);
-
             input = PrePro.filter(input);
             Console.WriteLine("\n");
             try

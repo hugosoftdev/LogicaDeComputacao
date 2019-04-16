@@ -13,7 +13,10 @@ namespace ConsoleApp1
         public static Node parseExpression()
         {
             Node tree = parseTerm();
-            while(tokens.actual.type == TokenType.PLUS || tokens.actual.type == TokenType.MINUS)
+            while(
+                tokens.actual.type == TokenType.PLUS || 
+                tokens.actual.type == TokenType.MINUS || 
+                tokens.actual.type == TokenType.OR)
             {
                 tree = new BinOp(tokens.actual.Copy(), new List<Node>() { tree });
                 tokens.selectNext();
@@ -25,7 +28,10 @@ namespace ConsoleApp1
         public static Node parseTerm()
         {
             Node tree = parseFactor();
-            while (tokens.actual.type == TokenType.MULTIPLY || tokens.actual.type == TokenType.DIVIDE)
+            while (
+                tokens.actual.type == TokenType.MULTIPLY || 
+                tokens.actual.type == TokenType.DIVIDE || 
+                tokens.actual.type == TokenType.AND)
             {
                 tree = new BinOp(tokens.actual.Copy(), new List<Node>() { tree });
                 tokens.selectNext();
@@ -56,12 +62,20 @@ namespace ConsoleApp1
                 {
                     tokens.selectNext();
                 }
-            } else if (tokens.actual.type == TokenType.MINUS || tokens.actual.type == TokenType.PLUS)
+            } else if (
+                tokens.actual.type == TokenType.MINUS || 
+                tokens.actual.type == TokenType.PLUS || 
+                tokens.actual.type == TokenType.NOT)
             {
                 Token temp = tokens.actual.Copy();
                 tokens.selectNext();
                 output = new UnOp(temp, new List<Node>() { parseFactor() });
-            } else
+            } else if (tokens.actual.type == TokenType.INPUT)
+            {
+                output = new Input(tokens.actual.Copy());
+                tokens.selectNext();
+            }
+            else
             {
                 throw new Exception("Unnespected Token");
             }
@@ -70,25 +84,14 @@ namespace ConsoleApp1
 
         public static Node parseStatements()
         {
-            if(tokens.actual.type == TokenType.BEGIN)
+            Node tree = new Statements(new Token(), new List<Node>());
+            tree.children.Add(parseStatement());
+            while (tokens.actual.type == TokenType.BREAKLINE)
             {
-                //pular linha
-                if(tokens.origin[tokens.position+1].Equals('\n'))
-                {
-                    tokens.position += 2;
-                }
                 tokens.selectNext();
-                Node tree = new Statements(new Token(), new List<Node>());
-                while(tokens.actual.type != TokenType.END)
-                {
-                    tree.children.Add(parseStatement());
-                }
-                tokens.selectNext();
-                return tree;
-            } else
-            {
-                throw new Exception("Missing BEGIN token");
+                tree.children.Add(parseStatement());
             }
+            return tree;
         }
 
         public static  Node parseStatement()
@@ -106,14 +109,114 @@ namespace ConsoleApp1
                 output = new Print(tokens.actual.Copy(), new List<Node>());
                 tokens.selectNext();
                 output.children.Add(parseExpression());
-            } else if(tokens.actual.type == TokenType.BEGIN)
+            }
+            else if (tokens.actual.type == TokenType.WHILE)
             {
-                output = parseStatements();
-            } else
+                output = new While(tokens.actual.Copy(), new List<Node>());
+                tokens.selectNext();
+                output.children.Add(parseRelExpression());
+                if (tokens.actual.type != TokenType.BREAKLINE)
+                {
+                    throw new Exception("Invalid Syntax -> Expecting new line");
+                }
+                tokens.selectNext();
+                output.children.Add(parseStatements());
+                if(tokens.actual.type != TokenType.WEND)
+                {
+                    throw new Exception("Invalid Syntax -> Missing WEND");
+                } else
+                {
+                    tokens.selectNext();
+                }
+            } else if (tokens.actual.type == TokenType.IF) 
+            {
+                output = new If(tokens.actual.Copy(), new List<Node>());
+                tokens.selectNext();
+                Node firstSon = parseRelExpression();
+                if(tokens.actual.type == TokenType.THEN)
+                {
+                    tokens.selectNext();
+                    if(tokens.actual.type != TokenType.BREAKLINE)
+                    {
+                        throw new Exception("Invalid Syntax -> Expecting new line");
+                    }
+                    tokens.selectNext();
+                    Node secondSon = parseStatements();
+                    output.children.Add(firstSon);
+                    output.children.Add(secondSon);
+                }
+                else
+                {
+                    throw new Exception("Invalid Syntax -> Missing THEN");
+                }
+                if(tokens.actual.type == TokenType.ELSE)
+                {
+                    tokens.selectNext();
+                    if (tokens.actual.type != TokenType.BREAKLINE)
+                    {
+                        throw new Exception("Invalid Syntax -> Expecting new line");
+                    }
+                    tokens.selectNext();
+                    output.children.Add(parseStatements());
+                    if(tokens.actual.type == TokenType.END)
+                    {
+                        tokens.selectNext();
+                        if (tokens.actual.type == TokenType.IF)
+                        {
+                            tokens.selectNext();
+                        }
+                        else
+                        {
+                            throw new Exception("Invalid Syntax -> Missing IF of END IF");
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("Invalid Syntax -> Missing END IF");
+                    }
+                }
+                else if (tokens.actual.type == TokenType.END)
+                {
+                    tokens.selectNext();
+                    if (tokens.actual.type == TokenType.IF)
+                    {
+                        tokens.selectNext();
+                    }
+                    else
+                    {
+                        throw new Exception("Invalid Syntax -> Missing IF of END IF");
+                    }
+                }
+                else
+                {
+                    throw new Exception("Invalid Syntax -> Missing END IF");
+                }
+            }
+            else
             {
                 output = new NoOp();
             }
             return output;
+        }
+
+        public static Node parseRelExpression()
+        {
+            Node output; 
+            Node firstSon = parseExpression();
+            if (
+                (tokens.actual.type == TokenType.EQUAL) ||
+                (tokens.actual.type == TokenType.BIGGERTHEN) || 
+                (tokens.actual.type == TokenType.SMALLERTHEN)
+                )
+            {
+               output =  new BinOp(tokens.actual.Copy(), new List<Node>() { firstSon });
+               tokens.selectNext();
+               output.children.Add(parseExpression());
+                return output;
+            } else
+            {
+                throw new Exception("Essa condição não é válida");
+            }    
         }
 
         public static Node run(string input)

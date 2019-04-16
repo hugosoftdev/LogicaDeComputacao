@@ -29,7 +29,13 @@ namespace ConsoleApp1
 
         public void Set(string key, Object value)
         {
-            st.Add(key, value);
+            if (st.ContainsKey(key))
+            {
+                st[key] = value;
+            } else
+            {
+                st.Add(key, value);
+            }
         }
     }
 }

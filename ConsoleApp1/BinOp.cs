@@ -32,8 +32,19 @@ namespace ConsoleApp1
             } else if(token.type == TokenType.DIVIDE)
             {
                 return firstNumber / secondNumber;
+            } else if (token.type == TokenType.BIGGERTHEN)
+            {
+                return firstNumber > secondNumber;
             }
-            throw new Exception("Um Nó foi classificado como BinOp sem ser um token do tipo PLUS | MINUS | MULTIPLY | DIVIDE");
+            else if (token.type == TokenType.SMALLERTHEN)
+            {
+                return firstNumber < secondNumber;
+            }
+            else if (token.type == TokenType.EQUAL)
+            {
+                return firstNumber == secondNumber;
+            }
+            throw new Exception("Um Nó foi classificado como BinOp sem ser um token do tipo PLUS | MINUS | MULTIPLY | DIVIDE || SMALLERTHEN || BIGGERTHEN || EQUAL");
         }
     }
 }

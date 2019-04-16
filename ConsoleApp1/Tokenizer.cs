@@ -41,16 +41,49 @@ namespace ConsoleApp1
 
                     if (foundWord)
                     {
-                        if(buffer == "BEGIN")
-                        {
-                            actual.type = TokenType.BEGIN;
-                        } else if (buffer == "END")
+                        if (buffer.ToUpper() == "END")
                         {
                             actual.type = TokenType.END;
                         } else if (buffer.ToUpper() == "PRINT")
                         {
                             actual.type = TokenType.PRINT;
-                        } else
+                        } else if (buffer.ToUpper() == "WHILE")
+                        {
+                            actual.type = TokenType.WHILE;
+                        }
+                        else if (buffer.ToUpper() == "WEND")
+                        {
+                            actual.type = TokenType.WEND;
+                        }
+                        else if (buffer.ToUpper() == "IF")
+                        {
+                            actual.type = TokenType.IF;
+                        }
+                        else if (buffer.ToUpper() == "THEN")
+                        {
+                            actual.type = TokenType.THEN;
+                        }
+                        else if (buffer.ToUpper() == "AND")
+                        {
+                            actual.type = TokenType.AND;
+                        }
+                        else if (buffer.ToUpper() == "OR")
+                        {
+                            actual.type = TokenType.OR;
+                        }
+                        else if (buffer.ToUpper() == "INPUT")
+                        {
+                            actual.type = TokenType.INPUT;
+                        }
+                        else if (buffer.ToUpper() == "NOT")
+                        {
+                            actual.type = TokenType.NOT;
+                        }
+                        else if (buffer.ToUpper() == "ELSE")
+                        {
+                            actual.type = TokenType.ELSE;
+                        }
+                        else
                         {
                             actual.type = TokenType.IDENTIFIER;
                             actual.value = buffer;
@@ -62,7 +95,17 @@ namespace ConsoleApp1
 
                     if(buffer.Length > 0)
                     {
-                        if (origin[iterator] == '-' || origin[iterator] == '+' || origin[iterator] == '*' || origin[iterator] == '/' || origin[iterator] == '(' || origin[iterator] == ')')
+                        if (
+                            origin[iterator] == '-' || 
+                            origin[iterator] == '+' || 
+                            origin[iterator] == '*' || 
+                            origin[iterator] == '/' || 
+                            origin[iterator] == '(' || 
+                            origin[iterator] == ')' || 
+                            origin[iterator] == '=' ||
+                            origin[iterator] == '>' ||
+                            origin[iterator] == '<'
+                            )
                         {
                             actual.type = TokenType.INT;
                             actual.value =Int32.Parse(buffer);
@@ -126,6 +169,21 @@ namespace ConsoleApp1
                         return actual;
                     }
 
+                    if (origin[iterator] == '>')
+                    {
+                        actual.type = TokenType.BIGGERTHEN;
+                        position = iterator + 1;
+                        return actual;
+                    }
+
+                    if (origin[iterator] == '<')
+                    {
+                        actual.type = TokenType.SMALLERTHEN;
+                        position = iterator + 1;
+                        return actual;
+                    }
+
+
                     iterator++;
 
                 } else
@@ -142,6 +200,14 @@ namespace ConsoleApp1
                             position = iterator + 1;
                         }             
                         return actual;
+                    } else
+                    {
+                        if ((origin[iterator] == '\r'))
+                        {
+                            actual.type = TokenType.BREAKLINE;
+                            position = iterator+2; //because its  \r\n on windows
+                            return actual;
+                        }
                     }
                     iterator++;
                 }

@@ -18,9 +18,20 @@ namespace ConsoleApp1
         PARENTHESESEND,
         IDENTIFIER,
         PRINT,
-        BEGIN,
+        IF,
+        ELSE,
+        WEND,
+        THEN,
+        WHILE,
         END,
-        EQUAL
+        OR,
+        AND,
+        EQUAL,
+        BIGGERTHEN,
+        SMALLERTHEN,
+        INPUT,
+        NOT,
+        BREAKLINE
     }
 
     public class Token
