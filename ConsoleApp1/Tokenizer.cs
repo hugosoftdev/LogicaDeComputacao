@@ -83,6 +83,42 @@ namespace ConsoleApp1
                         {
                             actual.type = TokenType.ELSE;
                         }
+                        else if (buffer.ToUpper() == "DIM")
+                        {
+                            actual.type = TokenType.DIM;
+                        }
+                        else if (buffer.ToUpper() == "AS")
+                        {
+                            actual.type = TokenType.AS;
+                        }
+                        else if (buffer.ToUpper() == "INTEGER")
+                        {
+                            actual.type = TokenType.INTEGER;
+                        }
+                        else if (buffer.ToUpper() == "BOOLEAN")
+                        {
+                            actual.type = TokenType.BOOLEAN;
+                        }
+                        else if (buffer.ToUpper() == "TRUE") 
+                        {
+                            actual.type = TokenType.BOOL;
+                            actual.value = true;
+                        }
+                        else if (buffer.ToUpper() == "FALSE")
+                        {
+                            actual.type = TokenType.BOOL;
+                            actual.value = false;
+                        }
+                        else if (buffer.ToUpper() == "MAIN")
+                        {
+                            actual.type = TokenType.MAIN;
+                            actual.value = false;
+                        }
+                        else if (buffer.ToUpper() == "SUB")
+                        {
+                            actual.type = TokenType.SUB;
+                            actual.value = false;
+                        }
                         else
                         {
                             actual.type = TokenType.IDENTIFIER;

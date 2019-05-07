@@ -13,11 +13,15 @@ namespace ConsoleApp1
             this.value = value;
         }
 
-        override public Object Evaluate(SymbolTable st)
+        override public EvaluateReturn Evaluate(SymbolTable st)
         {
             Token token = (Token) this.value;
             string key = (string) token.value;
-            return st.Get(key);
+            if((TokenType) st.GetType(key) == TokenType.INTEGER)
+            {
+                return new EvaluateReturn() { value = st.GetValue(key), type = TokenType.INT };
+            }
+            return new EvaluateReturn() { value = st.GetValue(key), type = TokenType.BOOL };
         }
     }
 }

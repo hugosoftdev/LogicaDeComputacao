@@ -14,9 +14,14 @@ namespace ConsoleApp1
             this.children = children;
         }
 
-        override public Object Evaluate(SymbolTable st)
+        override public EvaluateReturn Evaluate(SymbolTable st)
         {
-            bool condition = (bool) children.ElementAt(0).Evaluate(st);
+            EvaluateReturn conditionEval = children.ElementAt(0).Evaluate(st); 
+            if((TokenType) conditionEval.type != TokenType.BOOL)
+            {
+                throw new Exception("Condition must be based on a boolean expression");
+            }
+            bool condition = (bool) conditionEval.value;
             bool hasElse = children.Count() == 3;
             if (condition)
             {
@@ -28,7 +33,7 @@ namespace ConsoleApp1
                     children.ElementAt(2).Evaluate(st);
                 }
             }
-            return null;
+            return new EvaluateReturn() { value=null, type= null};
         }
     }
 }

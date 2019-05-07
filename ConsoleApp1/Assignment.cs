@@ -14,13 +14,36 @@ namespace ConsoleApp1
             this.children = children;
         }
 
-        override public Object Evaluate(SymbolTable st)
+        override public EvaluateReturn Evaluate(SymbolTable st)
         {
             Token childrenToken = (Token) this.children.ElementAt(0).value;
             string stKey = (string) childrenToken.value;
-            int assignmentValue = (int) this.children.ElementAt(1).Evaluate(st);
-            st.Set(stKey, assignmentValue);
-            return null;
+            EvaluateReturn evalReturn =   this.children.ElementAt(1).Evaluate(st);
+            TokenType varType = (TokenType) st.GetType(stKey);
+
+            if(varType == TokenType.INTEGER)
+            {
+                if ((TokenType) evalReturn.type == TokenType.INT)
+                {
+                    int assignmentValue = (int) evalReturn.value;
+                    st.SetValue(stKey, assignmentValue);
+                } else
+                {
+                    throw new Exception("Variable is INT but boolean was given");
+                }          
+            } else
+            {
+                if ((TokenType) evalReturn.type == TokenType.BOOL)
+                {
+                    bool assignmentValue = (bool) evalReturn.value;
+                    st.SetValue(stKey, assignmentValue);
+                }
+                else
+                {
+                    throw new Exception("Variable is Bool but Integer was given");
+                }
+            }       
+            return new EvaluateReturn() {  value=null, type=null };
         }
     }
 }

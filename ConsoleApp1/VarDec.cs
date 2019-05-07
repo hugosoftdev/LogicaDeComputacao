@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp1
 {
-    public class Statements : Node
+    public class VarDec : Node
     {
-        public Statements(Token value, List<Node> children)
+        public VarDec(Token value, List<Node> children)
         {
             this.value = value;
             this.children = children;
@@ -16,11 +16,11 @@ namespace ConsoleApp1
 
         override public EvaluateReturn Evaluate(SymbolTable st)
         {
-            foreach(Node node in children)
-            {
-                node.Evaluate(st);
-            }
+            Token token = (Token) this.children.ElementAt(0).value;
+            string key = (string) token.value;
+            st.SetType(key, (TokenType) this.children.ElementAt(1).Evaluate(st).value);
             return new EvaluateReturn() { value = null, type = null };
+
         }
     }
 }

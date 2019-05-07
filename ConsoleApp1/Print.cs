@@ -14,10 +14,11 @@ namespace ConsoleApp1
             this.children = children;
         }
 
-        override public Object Evaluate(SymbolTable st)
+        override public EvaluateReturn Evaluate(SymbolTable st)
         {
-            Console.WriteLine(this.children.ElementAt(0).Evaluate(st));
-            return null;
+            EvaluateReturn evalReturn = this.children.ElementAt(0).Evaluate(st);
+            Console.WriteLine(evalReturn.value);
+            return new EvaluateReturn() { value = null, type = null };
         }
     }
 }

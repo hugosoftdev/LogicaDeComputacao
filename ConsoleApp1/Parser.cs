@@ -74,6 +74,10 @@ namespace ConsoleApp1
             {
                 output = new Input(tokens.actual.Copy());
                 tokens.selectNext();
+            } else if (tokens.actual.type == TokenType.BOOL)
+            {
+                output = new Bool(tokens.actual.Copy());
+                tokens.selectNext();
             }
             else
             {
@@ -82,14 +86,72 @@ namespace ConsoleApp1
             return output;
         }
 
-        public static Node parseStatements()
+
+        public static Node parseType()
+        {
+            if(tokens.actual.type == TokenType.INTEGER || (tokens.actual.type == TokenType.BOOLEAN))
+            {
+                Node output = new Type(tokens.actual.Copy());
+                tokens.selectNext();
+                return output;
+            } 
+            throw new Exception("Invalid Syntax - Expecting Boolean or Integer token");
+            
+        }
+
+        public static Node parseProgram()
         {
             Node tree = new Statements(new Token(), new List<Node>());
-            tree.children.Add(parseStatement());
-            while (tokens.actual.type == TokenType.BREAKLINE)
+            if (tokens.actual.type == TokenType.SUB)
             {
                 tokens.selectNext();
-                tree.children.Add(parseStatement());
+                if(tokens.actual.type == TokenType.MAIN)
+                {
+                    tokens.selectNext();
+                    if(tokens.actual.type == TokenType.PARENTHESESBEGIN)
+                    {
+                        tokens.selectNext();
+                        if(tokens.actual.type == TokenType.PARENTHESESEND)
+                        {
+                            tokens.selectNext();
+                            if (tokens.actual.type != TokenType.BREAKLINE)
+                            {
+                                throw new Exception("Invalid Syntax -> Expecting new line");
+                            }
+                            tokens.selectNext();
+                            while(tokens.actual.type != TokenType.END)
+                            {
+                                tree.children.Add(parseStatement());
+                                if (tokens.actual.type != TokenType.BREAKLINE)
+                                {
+                                    throw new Exception("Invalid Syntax -> Expecting new line");
+                                }
+                                tokens.selectNext();
+                            }
+                            tokens.selectNext();
+                            if (tokens.actual.type == TokenType.SUB)
+                            {
+                                tokens.selectNext();
+                            }else
+                            {
+                                throw new Exception("Invalid Syntax -> Expecting SUB token");
+                            }
+                        } else
+                        {
+                            throw new Exception("Invalid Syntax -> Expecting ) after ( token");
+                        }
+                    } else
+                    {
+                        throw new Exception("Invalid Syntax -> Expecting ( after main token");
+                    }
+                } else
+                {
+                    throw new Exception("Invalid Syntax -> Expecting Main token after sub");
+                }
+
+            } else
+            {
+                throw new Exception("Invalid Syntax -> Expecting SUB token");
             }
             return tree;
         }
@@ -110,6 +172,28 @@ namespace ConsoleApp1
                 tokens.selectNext();
                 output.children.Add(parseExpression());
             }
+            else if (tokens.actual.type == TokenType.DIM)
+            {
+                output = new VarDec(tokens.actual.Copy(), new List<Node>());
+                tokens.selectNext();
+                if(tokens.actual.type == TokenType.IDENTIFIER)
+                {
+                    output.children.Add(new Identifier(tokens.actual.Copy()));
+                    tokens.selectNext();
+                    if (tokens.actual.type == TokenType.AS)
+                    {
+                        tokens.selectNext();
+                        output.children.Add(parseType());
+                    } else
+                    {
+                        throw new Exception("Invalid Syntax - Expecting As token");
+                    }
+                }
+                else
+                {
+                    throw new Exception("Invalid Syntax - Expecting Identifier after DIM");
+                }
+            }
             else if (tokens.actual.type == TokenType.WHILE)
             {
                 output = new While(tokens.actual.Copy(), new List<Node>());
@@ -119,15 +203,19 @@ namespace ConsoleApp1
                 {
                     throw new Exception("Invalid Syntax -> Expecting new line");
                 }
-                tokens.selectNext();
-                output.children.Add(parseStatements());
-                if(tokens.actual.type != TokenType.WEND)
+                tokens.selectNext();   
+                Node whileStatements = new Statements(tokens.actual.Copy(), new List<Node>());
+                while (tokens.actual.type != TokenType.WEND)
                 {
-                    throw new Exception("Invalid Syntax -> Missing WEND");
-                } else
-                {
+                    whileStatements.children.Add(parseStatement());
+                    if (tokens.actual.type != TokenType.BREAKLINE)
+                    {
+                        throw new Exception("Invalid Syntax -> Expecting new line");
+                    }
                     tokens.selectNext();
                 }
+                output.children.Add(whileStatements);
+                tokens.selectNext();
             } else if (tokens.actual.type == TokenType.IF) 
             {
                 output = new If(tokens.actual.Copy(), new List<Node>());
@@ -141,7 +229,16 @@ namespace ConsoleApp1
                         throw new Exception("Invalid Syntax -> Expecting new line");
                     }
                     tokens.selectNext();
-                    Node secondSon = parseStatements();
+                    Node secondSon = new Statements(tokens.actual.Copy(), new List<Node>());
+                    while ((tokens.actual.type != TokenType.ELSE) && (tokens.actual.type != TokenType.END))
+                    {
+                        secondSon.children.Add(parseStatement());
+                        if (tokens.actual.type != TokenType.BREAKLINE)
+                        {
+                            throw new Exception("Invalid Syntax -> Expecting new line");
+                        }
+                        tokens.selectNext();
+                    }
                     output.children.Add(firstSon);
                     output.children.Add(secondSon);
                 }
@@ -157,22 +254,25 @@ namespace ConsoleApp1
                         throw new Exception("Invalid Syntax -> Expecting new line");
                     }
                     tokens.selectNext();
-                    output.children.Add(parseStatements());
-                    if(tokens.actual.type == TokenType.END)
+                    Node thirdSon = new Statements(tokens.actual.Copy(), new List<Node>());
+                    while (tokens.actual.type != TokenType.END)
+                    {
+                        thirdSon.children.Add(parseStatement());
+                        if (tokens.actual.type != TokenType.BREAKLINE)
+                        {
+                            throw new Exception("Invalid Syntax -> Expecting new line");
+                        }
+                        tokens.selectNext();
+                    }
+                    output.children.Add(thirdSon);
+                    tokens.selectNext();
+                    if (tokens.actual.type == TokenType.IF)
                     {
                         tokens.selectNext();
-                        if (tokens.actual.type == TokenType.IF)
-                        {
-                            tokens.selectNext();
-                        }
-                        else
-                        {
-                            throw new Exception("Invalid Syntax -> Missing IF of END IF");
-                        }
                     }
                     else
                     {
-                        throw new Exception("Invalid Syntax -> Missing END IF");
+                        throw new Exception("Invalid Syntax -> Missing IF of END IF");
                     }
                 }
                 else if (tokens.actual.type == TokenType.END)
@@ -223,7 +323,7 @@ namespace ConsoleApp1
         {
             Parser.tokens = new Tokenizer() { origin = input, position = 0, actual = new Token() };
             tokens.selectNext();
-            Node tree = parseStatements();
+            Node tree = parseProgram();
             if (tokens.actual.type != TokenType.EOF)
             {
                 throw new Exception("Entrada inválida, a cadeia terminou sem um END");

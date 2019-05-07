@@ -14,17 +14,28 @@ namespace ConsoleApp1
             this.children = children;
         }
 
-        override public Object Evaluate(SymbolTable st)
+        override public EvaluateReturn Evaluate(SymbolTable st)
         {
             Token token = (Token) this.value;
-            if(token.type == TokenType.MINUS)
+            EvaluateReturn evalReturn = this.children.ElementAt(0).Evaluate(st);
+            if(token.type == TokenType.MINUS && ((TokenType) evalReturn.type == TokenType.INT))
             {
-                return - (int) this.children.ElementAt(0).Evaluate(st);
-            } else if (token.type == TokenType.PLUS)
+                int value =  - (int) evalReturn.value;
+                return new EvaluateReturn() { value = value, type = TokenType.INT };
+            } else if (token.type == TokenType.PLUS && ((TokenType)evalReturn.type == TokenType.INT))
             {
-                return (int) this.children.ElementAt(0).Evaluate(st);
+                int value = (int)evalReturn.value;
+                return new EvaluateReturn() { value = value, type = TokenType.INT };
             }
-            throw new Exception("Um Nó foi classificado como UnOp sem ser um token do tipo PLUS ou MINUS");
+            else if (token.type == TokenType.NOT && ((TokenType)evalReturn.type == TokenType.BOOL))
+            {
+                bool value = !(bool)evalReturn.value;
+                return new EvaluateReturn() { value = value, type = TokenType.BOOL };
+            } else
+            {
+                throw new Exception("Operação unária com tipos inválidos");
+            }
+            throw new Exception("Um Nó foi classificado como UnOp sem ser um token do tipo PLUS,MINUS ou NOT");
         }
     }
 }

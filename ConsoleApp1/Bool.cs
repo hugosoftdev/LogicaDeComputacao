@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp1
 {
-    public class IntVal : Node
+    public class Bool : Node
     {
-        public IntVal(Token value)
+        public Bool(Token value)
         {
             this.value = value;
         }
@@ -16,7 +16,7 @@ namespace ConsoleApp1
         override public EvaluateReturn Evaluate(SymbolTable st)
         {
             Token token = (Token) this.value;
-            int val = Int32.Parse(token.value.ToString());
+            bool val = bool.Parse(token.value.ToString());
             return new EvaluateReturn() { value = val, type = token.type };
         }
     }

@@ -14,13 +14,25 @@ namespace ConsoleApp1
             this.children = children;
         }
 
-        override public Object Evaluate(SymbolTable st)
+        override public EvaluateReturn Evaluate(SymbolTable st)
         {
-            while ((bool) children.ElementAt(0).Evaluate(st))
+            EvaluateReturn evalReturn = children.ElementAt(0).Evaluate(st);
+            if((TokenType) evalReturn.type != TokenType.BOOL)
+            {
+                throw new Exception("While must receiva a expression that returns a bool");
+            }
+            bool condition = (bool)evalReturn.value;
+            while (condition)
             {
                 children.ElementAt(1).Evaluate(st);
+                evalReturn = children.ElementAt(0).Evaluate(st);
+                if ((TokenType)evalReturn.type != TokenType.BOOL)
+                {
+                    throw new Exception("While must receiva a expression that returns a bool");
+                }
+                condition = (bool)evalReturn.value;
             }
-            return 1;
+            return new EvaluateReturn() { value=null, type = null };
         }
     }
 }

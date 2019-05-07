@@ -31,6 +31,13 @@ namespace ConsoleApp1
         SMALLERTHEN,
         INPUT,
         NOT,
+        DIM,
+        AS,
+        INTEGER,
+        BOOLEAN,
+        BOOL,
+        SUB,
+        MAIN,
         BREAKLINE
     }
 

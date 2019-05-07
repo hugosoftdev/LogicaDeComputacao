@@ -12,9 +12,9 @@ namespace ConsoleApp1
         {
         }
 
-        override public Object Evaluate(SymbolTable st)
+        override public EvaluateReturn Evaluate(SymbolTable st)
         {
-            return null;
+            return new EvaluateReturn() { value = null, type = null };
         }
     }
 }

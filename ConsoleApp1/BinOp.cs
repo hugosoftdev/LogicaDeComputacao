@@ -14,35 +14,58 @@ namespace ConsoleApp1
             this.children = children;
         }
 
-        override public Object Evaluate(SymbolTable st)
+        override public EvaluateReturn Evaluate(SymbolTable st)
         {
-            int firstNumber = (int)this.children.ElementAt(0).Evaluate(st);
-            int secondNumber = (int)this.children.ElementAt(1).Evaluate(st);
+            EvaluateReturn firstNumber = this.children.ElementAt(0).Evaluate(st);
+            EvaluateReturn secondNumber = this.children.ElementAt(1).Evaluate(st);
+
+            if((TokenType) firstNumber.type != (TokenType) secondNumber.type)
+            {
+                throw new Exception("Operação com dois tipos diferentes de variável");
+            }
 
             Token token = (Token) this.value;
-            if(token.type == TokenType.MINUS)
+
+            if(token.type == TokenType.MINUS && ((TokenType) firstNumber.type == TokenType.INT))
             {
-                return firstNumber - secondNumber;
-            } else if(token.type == TokenType.PLUS)
+                return new EvaluateReturn() { value= (int) firstNumber.value - (int) secondNumber.value, type = TokenType.INT };
+            } else if(token.type == TokenType.PLUS && ((TokenType)firstNumber.type == TokenType.INT))
             {
-                return firstNumber + secondNumber;
-            } else if(token.type == TokenType.MULTIPLY)
+                return new EvaluateReturn() { value = (int)firstNumber.value + (int)secondNumber.value, type = TokenType.INT };
+            } else if(token.type == TokenType.MULTIPLY && ((TokenType)firstNumber.type == TokenType.INT))
             {
-                return firstNumber * secondNumber;
-            } else if(token.type == TokenType.DIVIDE)
+                return new EvaluateReturn() { value = (int)firstNumber.value * (int)secondNumber.value, type = TokenType.INT };
+            } else if(token.type == TokenType.DIVIDE && ((TokenType)firstNumber.type == TokenType.INT))
             {
-                return firstNumber / secondNumber;
-            } else if (token.type == TokenType.BIGGERTHEN)
+                return new EvaluateReturn() { value = (int)firstNumber.value / (int)secondNumber.value, type = TokenType.INT };
+            } else if (token.type == TokenType.BIGGERTHEN && ((TokenType)firstNumber.type == TokenType.BOOL))
             {
-                return firstNumber > secondNumber;
+                return new EvaluateReturn() { value = (int)firstNumber.value > (int)secondNumber.value, type = TokenType.INT };
             }
-            else if (token.type == TokenType.SMALLERTHEN)
+            else if (token.type == TokenType.SMALLERTHEN && ((TokenType)firstNumber.type == TokenType.INT))
             {
-                return firstNumber < secondNumber;
+                return new EvaluateReturn() { value = (int) firstNumber.value < (int)secondNumber.value, type = TokenType.BOOL };
+            }
+            else if (token.type == TokenType.AND && ((TokenType)firstNumber.type == TokenType.BOOL))
+            {
+                return new EvaluateReturn() { value = (bool)firstNumber.value && (bool)secondNumber.value, type = TokenType.BOOL };
+            }
+            else if (token.type == TokenType.OR && ((TokenType)firstNumber.type == TokenType.BOOL))
+            {
+                return new EvaluateReturn() { value = (bool)firstNumber.value || (bool)secondNumber.value, type = TokenType.BOOL };
             }
             else if (token.type == TokenType.EQUAL)
             {
-                return firstNumber == secondNumber;
+                if((TokenType) firstNumber.type == TokenType.INT)
+                {
+                    return new EvaluateReturn() { value = (int) firstNumber.value == (int) secondNumber.value, type = TokenType.BOOL };
+                } else
+                {
+                    return new EvaluateReturn() { value = (bool) firstNumber.value == (bool) secondNumber.value, type = TokenType.BOOL };
+                }
+            } else
+            {
+                throw new Exception("Tipo de variável não compatível com a operação realizada");
             }
             throw new Exception("Um Nó foi classificado como BinOp sem ser um token do tipo PLUS | MINUS | MULTIPLY | DIVIDE || SMALLERTHEN || BIGGERTHEN || EQUAL");
         }

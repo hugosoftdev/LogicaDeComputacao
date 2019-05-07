@@ -13,9 +13,21 @@ namespace ConsoleApp1
             this.value = value;
         }
 
-        override public Object Evaluate(SymbolTable st)
+        override public EvaluateReturn Evaluate(SymbolTable st)
         {
-            return Int32.Parse(Console.ReadLine());
+            try
+            {
+                return new EvaluateReturn() { value = Int32.Parse(Console.ReadLine()), type = TokenType.INT };
+            } catch (Exception e)
+            {
+                try
+                {
+                    return new EvaluateReturn() { value = bool.Parse(Console.ReadLine().ToLower()), type = TokenType.BOOL };
+                } catch (Exception e2)
+                {
+                    throw new Exception("Valor inserido no input não é um token válido");
+                }
+            }
         }
     }
 }
