@@ -18,17 +18,23 @@ namespace ConsoleApp1
         {
             Token token = (Token) this.value;
             EvaluateReturn evalReturn = this.children.ElementAt(0).Evaluate(st);
-            if(token.type == TokenType.MINUS && ((TokenType) evalReturn.type == TokenType.INT))
+            NasmManager.AddLine("MOV EAX, EBX");
+            if (token.type == TokenType.MINUS && ((TokenType) evalReturn.type == TokenType.INT))
             {
+                NasmManager.AddLine("MOV EBX, 0");
+                NasmManager.AddLine("SUB EBX, EAX");
                 int value =  - (int) evalReturn.value;
                 return new EvaluateReturn() { value = value, type = TokenType.INT };
             } else if (token.type == TokenType.PLUS && ((TokenType)evalReturn.type == TokenType.INT))
             {
+                NasmManager.AddLine("MOV EBX, 0");
+                NasmManager.AddLine("ADD EBX, EAX");
                 int value = (int)evalReturn.value;
                 return new EvaluateReturn() { value = value, type = TokenType.INT };
             }
             else if (token.type == TokenType.NOT && ((TokenType)evalReturn.type == TokenType.BOOL))
             {
+                NasmManager.AddLine("NEG EBX");
                 bool value = !(bool)evalReturn.value;
                 return new EvaluateReturn() { value = value, type = TokenType.BOOL };
             } else

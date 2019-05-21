@@ -24,13 +24,23 @@ namespace ConsoleApp1
             try
             {
                 SymbolTable st = new SymbolTable();
+                NasmManager.InitFile();
                 Parser.run(input).Evaluate(st);
+                NasmManager.EndFile();
+                CreateFile();
             } catch(Exception e)
             {
                 Console.WriteLine(e.Message);
             }
             Console.WriteLine("\n");
-            System.Threading.Thread.Sleep(5000);
+            Console.WriteLine(NasmManager.Code);
+            System.Threading.Thread.Sleep(100000000);
+        }
+
+        static void CreateFile()
+        {
+            string path = "./output.nasm";
+            File.WriteAllText(path, NasmManager.Code);
         }
     }
 }

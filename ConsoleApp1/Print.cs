@@ -18,6 +18,9 @@ namespace ConsoleApp1
         {
             EvaluateReturn evalReturn = this.children.ElementAt(0).Evaluate(st);
             Console.WriteLine(evalReturn.value);
+            NasmManager.AddLine("PUSH EBX");
+            NasmManager.AddLine("CALL print");
+            NasmManager.AddLine("POP EBX");
             return new EvaluateReturn() { value = null, type = null };
         }
     }

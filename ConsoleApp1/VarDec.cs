@@ -19,8 +19,9 @@ namespace ConsoleApp1
             Token token = (Token) this.children.ElementAt(0).value;
             string key = (string) token.value;
             st.SetType(key, (TokenType) this.children.ElementAt(1).Evaluate(st).value);
+            NasmManager.AddLine("PUSH DWORD 0");
             return new EvaluateReturn() { value = null, type = null };
-
         }
     }
 }
+    

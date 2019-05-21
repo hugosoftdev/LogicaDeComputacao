@@ -17,7 +17,8 @@ namespace ConsoleApp1
         {
             Token token = (Token) this.value;
             string key = (string) token.value;
-            if((TokenType) st.GetType(key) == TokenType.INTEGER)
+            NasmManager.AddLine($"MOV EBX,  [EBP-{st.GetEBPDeslocation(key)}]");
+            if ((TokenType) st.GetType(key) == TokenType.INTEGER)
             {
                 return new EvaluateReturn() { value = st.GetValue(key), type = TokenType.INT };
             }

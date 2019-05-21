@@ -14,6 +14,7 @@ namespace ConsoleApp1
 
         override public EvaluateReturn Evaluate(SymbolTable st)
         {
+            NasmManager.AddLine("NOP");
             return new EvaluateReturn() { value = null, type = null };
         }
     }

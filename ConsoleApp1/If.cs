@@ -16,6 +16,9 @@ namespace ConsoleApp1
 
         override public EvaluateReturn Evaluate(SymbolTable st)
         {
+            int labelCounter = st.GetLabelCounter();
+            string ifLabel = $"IF_{labelCounter}";
+            NasmManager.AddLine(ifLabel + ":");
             EvaluateReturn conditionEval = children.ElementAt(0).Evaluate(st); 
             if((TokenType) conditionEval.type != TokenType.BOOL)
             {
@@ -23,16 +26,27 @@ namespace ConsoleApp1
             }
             bool condition = (bool) conditionEval.value;
             bool hasElse = children.Count() == 3;
-            if (condition)
+
+            NasmManager.AddLine("CMP EBX, False");
+
+            if (hasElse)
             {
-                children.ElementAt(1).Evaluate(st);
+                NasmManager.AddLine($"JE ELSE_{labelCounter}");
             } else
             {
-                if (hasElse)
-                {
-                    children.ElementAt(2).Evaluate(st);
-                }
+                NasmManager.AddLine($"JE END_IF_{labelCounter}");
             }
+
+            children.ElementAt(1).Evaluate(st);
+            NasmManager.AddLine($"JMP END_IF_{labelCounter}");
+
+            if (hasElse)
+            {
+                NasmManager.AddLine($"ELSE_{labelCounter}");
+                children.ElementAt(2).Evaluate(st);
+            }
+
+            NasmManager.AddLine($"END_IF_{labelCounter}:");
             return new EvaluateReturn() { value=null, type= null};
         }
     }

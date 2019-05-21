@@ -21,6 +21,7 @@ namespace ConsoleApp1
             EvaluateReturn evalReturn =   this.children.ElementAt(1).Evaluate(st);
             TokenType varType = (TokenType) st.GetType(stKey);
 
+
             if(varType == TokenType.INTEGER)
             {
                 if ((TokenType) evalReturn.type == TokenType.INT)
@@ -42,7 +43,8 @@ namespace ConsoleApp1
                 {
                     throw new Exception("Variable is Bool but Integer was given");
                 }
-            }       
+            }
+            NasmManager.AddLine($"MOV [EBP-{st.GetEBPDeslocation(stKey)}] , EBX");
             return new EvaluateReturn() {  value=null, type=null };
         }
     }

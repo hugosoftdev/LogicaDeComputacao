@@ -17,6 +17,7 @@ namespace ConsoleApp1
         {
             Token token = (Token) this.value;
             int val = Int32.Parse(token.value.ToString());
+            NasmManager.AddLine($"MOV EBX,  {val}");
             return new EvaluateReturn() { value = val, type = token.type };
         }
     }

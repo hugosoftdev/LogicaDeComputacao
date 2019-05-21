@@ -9,10 +9,14 @@ namespace ConsoleApp1
     public class SymbolTable
     {
         private Dictionary<string, Object> st;
+        private Dictionary<string, int> SymbolStackDeslocation;
+        private int EBP_DESLOC = 0;
+        private int LabelCounter = 0;
 
         public SymbolTable()
         {
             st = new Dictionary<string, Object>();
+            SymbolStackDeslocation = new Dictionary<string, int>(); 
         }
 
         public Object GetValue(string key)
@@ -63,7 +67,21 @@ namespace ConsoleApp1
             else
             {
                 st.Add(key, new List<Object>() { null, type });
+                EBP_DESLOC += 4;
+                SymbolStackDeslocation.Add(key, EBP_DESLOC);
             }
+        }
+
+        public int GetEBPDeslocation(string key)
+        {
+            return SymbolStackDeslocation[key];
+        }
+
+        public int GetLabelCounter()
+        {
+            int counter = LabelCounter;
+            LabelCounter += 1;
+            return counter;
         }
     }
 }
