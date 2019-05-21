@@ -28,12 +28,6 @@ namespace ConsoleApp1
             NasmManager.AddLine($"JE EXIT_{labelCounter}");
             bool condition = (bool)evalReturn.value;
             children.ElementAt(1).Evaluate(st);
-            evalReturn = children.ElementAt(0).Evaluate(st);
-            if ((TokenType)evalReturn.type != TokenType.BOOL)
-            {
-                throw new Exception("While must receiva a expression that returns a bool");
-            }
-            condition = (bool)evalReturn.value;
             NasmManager.AddLine($"JMP {loopLabel}");
             NasmManager.AddLine($"EXIT_{labelCounter}:");
             return new EvaluateReturn() { value=null, type = null };
