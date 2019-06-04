@@ -42,7 +42,9 @@ namespace ConsoleApp1
         BREAKLINE,
         CALL,
         FUNCTION,
-        COMA
+        COMA,
+        CONDICAO,
+
     }
 
     public class Token

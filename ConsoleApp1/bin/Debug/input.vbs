@@ -1,11 +1,16 @@
-Sub Main()
-    Dim tb as boolean
-    Dim ti as integer
+codigo Main()
+    criar tb como booleano
+    criar ti como numero
 
-    tb = TRUE
+    tb = verdade
     ti = 10
 
-    if tb then
-        print ti + 10
-    end if
-End Sub
+    se tb entao
+        mostre_me ti + 10
+    fim condicao
+
+    enquanto ti < 50
+	mostre_me ti
+        ti = ti +1
+    fim_do_loop
+fim codigo 

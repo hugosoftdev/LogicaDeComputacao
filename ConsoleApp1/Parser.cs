@@ -510,7 +510,7 @@ namespace ConsoleApp1
                     }
                     output.children.Add(thirdSon);
                     tokens.selectNext();
-                    if (tokens.actual.type == TokenType.IF)
+                    if (tokens.actual.type == TokenType.CONDICAO)
                     {
                         tokens.selectNext();
                     }
@@ -522,7 +522,7 @@ namespace ConsoleApp1
                 else if (tokens.actual.type == TokenType.END)
                 {
                     tokens.selectNext();
-                    if (tokens.actual.type == TokenType.IF)
+                    if (tokens.actual.type == TokenType.CONDICAO)
                     {
                         tokens.selectNext();
                     }

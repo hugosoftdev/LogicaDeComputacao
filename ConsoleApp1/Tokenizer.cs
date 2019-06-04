@@ -41,92 +41,91 @@ namespace ConsoleApp1
 
                     if (foundWord)
                     {
-                        if (buffer.ToUpper() == "END")
+                        if (buffer.ToUpper() == "FIM")
                         {
                             actual.type = TokenType.END;
                         }
-                        else if (buffer.ToUpper() == "PRINT")
+                        else if (buffer.ToUpper() == "MOSTRE_ME")
                         {
                             actual.type = TokenType.PRINT;
                         }
-                        else if (buffer.ToUpper() == "WHILE")
+                        else if (buffer.ToUpper() == "ENQUANTO")
                         {
                             actual.type = TokenType.WHILE;
                         }
-                        else if (buffer.ToUpper() == "WEND")
+                        else if (buffer.ToUpper() == "FIM_DO_LOOP")
                         {
                             actual.type = TokenType.WEND;
                         }
-                        else if (buffer.ToUpper() == "IF")
+                        else if (buffer.ToUpper() == "SE")
                         {
                             actual.type = TokenType.IF;
                         }
-                        else if (buffer.ToUpper() == "THEN")
+                        else if (buffer.ToUpper() == "CONDICAO")
+                        {
+                            actual.type = TokenType.CONDICAO;
+                        }
+                        else if (buffer.ToUpper() == "ENTAO")
                         {
                             actual.type = TokenType.THEN;
                         }
-                        else if (buffer.ToUpper() == "AND")
+                        else if (buffer.ToUpper() == "E")
                         {
                             actual.type = TokenType.AND;
                         }
-                        else if (buffer.ToUpper() == "OR")
+                        else if (buffer.ToUpper() == "OU")
                         {
                             actual.type = TokenType.OR;
                         }
-                        else if (buffer.ToUpper() == "INPUT")
+                        else if (buffer.ToUpper() == "ENTRADA")
                         {
                             actual.type = TokenType.INPUT;
                         }
-                        else if (buffer.ToUpper() == "NOT")
+                        else if (buffer.ToUpper() == "NAO")
                         {
                             actual.type = TokenType.NOT;
                         }
-                        else if (buffer.ToUpper() == "ELSE")
+                        else if (buffer.ToUpper() == "CASO_CONTRARIO")
                         {
                             actual.type = TokenType.ELSE;
                         }
-                        else if (buffer.ToUpper() == "DIM")
+                        else if (buffer.ToUpper() == "CRIAR")
                         {
                             actual.type = TokenType.DIM;
                         }
-                        else if (buffer.ToUpper() == "AS")
+                        else if (buffer.ToUpper() == "COMO")
                         {
                             actual.type = TokenType.AS;
                         }
-                        else if (buffer.ToUpper() == "INTEGER")
+                        else if (buffer.ToUpper() == "NUMERO")
                         {
                             actual.type = TokenType.INTEGER;
                         }
-                        else if (buffer.ToUpper() == "BOOLEAN")
+                        else if (buffer.ToUpper() == "BOOLEANO")
                         {
                             actual.type = TokenType.BOOLEAN;
                         }
-                        else if (buffer.ToUpper() == "TRUE")
+                        else if (buffer.ToUpper() == "VERDADE")
                         {
                             actual.type = TokenType.BOOL;
                             actual.value = true;
                         }
-                        else if (buffer.ToUpper() == "FALSE")
+                        else if (buffer.ToUpper() == "FALSO")
                         {
                             actual.type = TokenType.BOOL;
                             actual.value = false;
                         }
-                        /*else if (buffer.ToUpper() == "MAIN")
-                        {
-                            actual.type = TokenType.MAIN;
-                            actual.value = false;
-                        }*/
-                        else if (buffer.ToUpper() == "SUB")
+                        else if (buffer.ToUpper() == "CODIGO")
                         {
                             actual.type = TokenType.SUB;
                             actual.value = false;
                         }
-                        else if (buffer.ToUpper() == "CALL")
+                        else if (buffer.ToUpper() == "CHAMAR")
                         {
                             actual.type = TokenType.CALL;
                             actual.value = false;
                         }
-                        else if (buffer.ToUpper() == "FUNCTION")
+                        else if (buffer.ToUpper() == "BLOCO")
                         {
                             actual.type = TokenType.FUNCTION;
                             actual.value = false;
