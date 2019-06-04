@@ -48,12 +48,40 @@ namespace ConsoleApp1
                 output = new IntVal(tokens.actual.Copy());
                 tokens.selectNext();
             } else if (tokens.actual.type == TokenType.IDENTIFIER) {
-                output = new Identifier(tokens.actual.Copy());
-                tokens.selectNext();
+                if (tokens.Spy().type != TokenType.PARENTHESESBEGIN)
+                {
+                    output = new Identifier(tokens.actual.Copy());
+                    tokens.selectNext();
+                } else
+                {
+                    Token funcIdentifier = tokens.actual.Copy();
+                    tokens.selectNext();
+                    tokens.selectNext();
+                    List<Node> arguments = new List<Node>();
+                    if (tokens.actual.type == TokenType.PARENTHESESEND)
+                    {
+                        tokens.selectNext();
+                    }
+                    else
+                    {
+                        arguments.Add(parseRelExpression());
+                        while (tokens.actual.type == TokenType.COMA)
+                        {
+                            tokens.selectNext();
+                            arguments.Add(parseRelExpression());
+                        }
+                        if (tokens.actual.type != TokenType.PARENTHESESEND)
+                        {
+                            throw new Exception("Exepecting ) to finish func call");
+                        }
+                        tokens.selectNext();
+                    }
+                    output = new FuncCall(funcIdentifier, arguments);
+                }               
             } else if (tokens.actual.type == TokenType.PARENTHESESBEGIN)
             {
                 tokens.selectNext();
-                output = parseExpression();
+                output = parseRelExpression();
                 if (tokens.actual.type != TokenType.PARENTHESESEND)
                 {
                     throw new Exception("Invalid Syntax - Missing )");
@@ -102,59 +130,241 @@ namespace ConsoleApp1
         public static Node parseProgram()
         {
             Node tree = new Statements(new Token(), new List<Node>());
-            if (tokens.actual.type == TokenType.SUB)
-            {
-                tokens.selectNext();
-                if(tokens.actual.type == TokenType.MAIN)
+            while ((tokens.actual.type == TokenType.SUB) || (tokens.actual.type == TokenType.FUNCTION)) {
+                if (tokens.actual.type == TokenType.SUB)
                 {
-                    tokens.selectNext();
-                    if(tokens.actual.type == TokenType.PARENTHESESBEGIN)
-                    {
-                        tokens.selectNext();
-                        if(tokens.actual.type == TokenType.PARENTHESESEND)
-                        {
-                            tokens.selectNext();
-                            if (tokens.actual.type != TokenType.BREAKLINE)
-                            {
-                                throw new Exception("Invalid Syntax -> Expecting new line");
-                            }
-                            tokens.selectNext();
-                            while(tokens.actual.type != TokenType.END)
-                            {
-                                tree.children.Add(parseStatement());
-                                if (tokens.actual.type != TokenType.BREAKLINE)
-                                {
-                                    throw new Exception("Invalid Syntax -> Expecting new line");
-                                }
-                                tokens.selectNext();
-                            }
-                            tokens.selectNext();
-                            if (tokens.actual.type == TokenType.SUB)
-                            {
-                                tokens.selectNext();
-                            }else
-                            {
-                                throw new Exception("Invalid Syntax -> Expecting SUB token");
-                            }
-                        } else
-                        {
-                            throw new Exception("Invalid Syntax -> Expecting ) after ( token");
-                        }
-                    } else
-                    {
-                        throw new Exception("Invalid Syntax -> Expecting ( after main token");
-                    }
-                } else
-                {
-                    throw new Exception("Invalid Syntax -> Expecting Main token after sub");
+                    tree.children.Add(parseSubDec());
                 }
-
-            } else
-            {
-                throw new Exception("Invalid Syntax -> Expecting SUB token");
+                else
+                {
+                    tree.children.Add(parseFuncDec());
+                }
             }
             return tree;
         }
+
+        public static Node parseSubDec()
+        {
+            tokens.selectNext();
+            Node tree = new SubDec(tokens.actual.Copy(), new List<Node>());
+            if (tokens.actual.type != TokenType.IDENTIFIER)
+            {
+                throw new Exception("Expecting Identifier after sub token");
+            }
+            tokens.selectNext();
+            if(tokens.actual.type != TokenType.PARENTHESESBEGIN)
+            {
+                throw new Exception("Expecting ( token");
+            }
+            tokens.selectNext();
+            if ((tokens.actual.type != TokenType.PARENTHESESEND) && 
+                (tokens.actual.type != TokenType.IDENTIFIER))
+            {
+                throw new Exception("Expecting ) or variable declaration");
+            }
+
+            if (tokens.actual.type == TokenType.IDENTIFIER)
+            {
+                Node vardec;
+
+                vardec = new VarDec(tokens.actual.Copy(), new List<Node>());
+                vardec.children.Add(new Identifier(tokens.actual.Copy()));
+                tokens.selectNext();
+                if (tokens.actual.type != TokenType.AS)
+                {
+                    throw new Exception("Expecting AS after identifier declaration");
+                }
+                tokens.selectNext();
+                vardec.children.Add(parseType());
+                tree.children.Add(vardec);
+
+                while (tokens.actual.type == TokenType.COMA)
+                {
+                    tokens.selectNext();
+                    vardec = new VarDec(tokens.actual.Copy(), new List<Node>());
+                    vardec.children.Add(new Identifier(tokens.actual.Copy()));
+                    tokens.selectNext();
+                    if (tokens.actual.type != TokenType.AS)
+                    {
+                        throw new Exception("Expecting AS after identifier declaration");
+                    }
+                    tokens.selectNext();
+                    vardec.children.Add(parseType());
+                    tree.children.Add(vardec);
+                }
+            }
+
+            tokens.selectNext(); //skipping )
+
+            if(tokens.actual.type != TokenType.BREAKLINE)
+            {
+                throw new Exception("Expecting new Line");
+            }
+            tokens.selectNext();
+
+            Node statements = new Statements(new Token(), new List<Node>());
+            if (tokens.Spy().type == TokenType.END)
+            {
+                tokens.selectNext();
+                if(tokens.actual.type != TokenType.SUB)
+                {
+                    throw new Exception("Expecting SUB after END");
+                }
+                tokens.selectNext();
+                tree.children.Add(statements);
+                return tree;
+            }
+
+        
+            statements.children.Add(parseStatement());
+            if(tokens.actual.type != TokenType.BREAKLINE)
+            {
+                throw new Exception("Expecting breakline");
+            }
+            tokens.selectNext();
+
+            while(tokens.actual.type != TokenType.END)
+            {
+                statements.children.Add(parseStatement());
+                if (tokens.actual.type != TokenType.BREAKLINE)
+                {
+                    throw new Exception("Expecting breakline");
+                }
+                tokens.selectNext();
+            }
+
+            tokens.selectNext();
+            if(tokens.actual.type != TokenType.SUB)
+            {
+                throw new Exception("Expecting SUB after END TOKEN");
+            }
+            tokens.selectNext();
+            tree.children.Add(statements);
+            if((tokens.actual.type != TokenType.BREAKLINE) && (tokens.actual.type != TokenType.EOF))
+            {
+                throw new Exception("Expecting breakline");
+            }
+            tokens.selectNext();
+            return tree;
+        }
+
+        public static Node parseFuncDec()
+        {            
+            tokens.selectNext();
+            if (tokens.actual.type != TokenType.IDENTIFIER)
+            {
+                throw new Exception("Expecting Identifier after function token");
+            }
+            Token actualToken = tokens.actual.Copy();
+            tokens.selectNext();
+
+            if (tokens.actual.type != TokenType.PARENTHESESBEGIN)
+            {
+                throw new Exception("Expecting ( token");
+            }
+            tokens.selectNext();
+            if ((tokens.actual.type != TokenType.PARENTHESESEND) &&
+                (tokens.actual.type != TokenType.IDENTIFIER))
+            {
+                throw new Exception("Expecting ) or variable declaration");
+            }
+
+            List<Node> varDecs = new List<Node>();
+
+            if (tokens.actual.type == TokenType.IDENTIFIER)
+            {
+                Node vardec;
+
+                vardec = new VarDec(tokens.actual.Copy(), new List<Node>());
+                vardec.children.Add(new Identifier(tokens.actual.Copy()));
+                tokens.selectNext();
+                if (tokens.actual.type != TokenType.AS)
+                {
+                    throw new Exception("Expecting AS after identifier declaration");
+                }
+                tokens.selectNext();
+                vardec.children.Add(parseType());
+                varDecs.Add(vardec);
+
+                while (tokens.actual.type == TokenType.COMA)
+                {
+                    tokens.selectNext();
+                    vardec = new VarDec(tokens.actual.Copy(), new List<Node>());
+                    vardec.children.Add(new Identifier(tokens.actual.Copy()));
+                    tokens.selectNext();
+                    if (tokens.actual.type != TokenType.AS)
+                    {
+                        throw new Exception("Expecting AS after identifier declaration");
+                    }
+                    tokens.selectNext();
+                    vardec.children.Add(parseType());
+                    varDecs.Add(vardec);
+                }
+            }
+
+            tokens.selectNext(); //skipping )
+
+            if (tokens.actual.type != TokenType.AS)
+            {
+                throw new Exception("Expecting AS after identifier of func");
+            }
+            tokens.selectNext();
+
+            Node tree = new FuncDec(actualToken, varDecs, parseType());
+
+            if (tokens.actual.type != TokenType.BREAKLINE)
+            {
+                throw new Exception("Expecting new Line");
+            }
+
+            tokens.selectNext();
+
+            Node statements = new Statements(new Token(), new List<Node>());
+
+            if (tokens.Spy().type == TokenType.END)
+            {
+                tokens.selectNext();
+                if (tokens.actual.type != TokenType.FUNCTION)
+                {
+                    throw new Exception("Expecting FUNCTION after END");
+                }
+                tokens.selectNext();
+                tree.children.Add(statements);
+                return tree;
+            }
+
+            statements.children.Add(parseStatement());
+            if (tokens.actual.type != TokenType.BREAKLINE)
+            {
+                throw new Exception("Expecting breakline");
+            }
+            tokens.selectNext();
+
+            while (tokens.actual.type != TokenType.END)
+            {
+                statements.children.Add(parseStatement());
+                if (tokens.actual.type != TokenType.BREAKLINE)
+                {
+                    throw new Exception("Expecting breakline");
+                }
+                tokens.selectNext();
+            }
+
+            tokens.selectNext();
+            if (tokens.actual.type != TokenType.FUNCTION)
+            {
+                throw new Exception("Expecting FUNCTION after END TOKEN");
+            }
+            tokens.selectNext();
+            tree.children.Add(statements);
+            if ((tokens.actual.type != TokenType.BREAKLINE) && (tokens.actual.type != TokenType.EOF))
+            {
+                throw new Exception("Expecting breakline");
+            }
+            tokens.selectNext();
+            return tree;
+        }
+
 
         public static  Node parseStatement()
         {
@@ -166,7 +376,41 @@ namespace ConsoleApp1
                 output = new Assignment(tokens.actual.Copy(), new List<Node>() { identifier });
                 tokens.selectNext();
                 output.children.Add(parseExpression());
-            } else if (tokens.actual.type == TokenType.PRINT)
+            } else if (tokens.actual.type == TokenType.CALL)
+            {
+                tokens.selectNext();
+                if(tokens.actual.type != TokenType.IDENTIFIER)
+                {
+                    throw new Exception("Expecting sub identifier after call token");
+                }
+                Token funcIdentifier = tokens.actual.Copy();
+                tokens.selectNext();
+
+                if (tokens.actual.type != TokenType.PARENTHESESBEGIN)
+                {
+                    throw new Exception("Expecting ( after sub identifier");
+                }
+                tokens.selectNext();
+                List<Node> arguments = new List<Node>();
+                if(tokens.actual.type == TokenType.PARENTHESESEND) {
+                    tokens.selectNext();
+                } else
+                {
+                    arguments.Add(parseExpression());
+                    while(tokens.actual.type == TokenType.COMA)
+                    {
+                        tokens.selectNext();
+                        arguments.Add(parseExpression());
+                    }
+                    if(tokens.actual.type != TokenType.PARENTHESESEND)
+                    {
+                        throw new Exception("Exepecting ) to finish sub call");
+                    }
+                    tokens.selectNext();
+                }
+                output = new SubCall(funcIdentifier, arguments);
+            }
+            else if (tokens.actual.type == TokenType.PRINT)
             {
                 output = new Print(tokens.actual.Copy(), new List<Node>());
                 tokens.selectNext();
@@ -301,22 +545,18 @@ namespace ConsoleApp1
 
         public static Node parseRelExpression()
         {
-            Node output; 
-            Node firstSon = parseExpression();
+            Node output = parseExpression();
             if (
                 (tokens.actual.type == TokenType.EQUAL) ||
                 (tokens.actual.type == TokenType.BIGGERTHEN) || 
                 (tokens.actual.type == TokenType.SMALLERTHEN)
                 )
             {
-               output =  new BinOp(tokens.actual.Copy(), new List<Node>() { firstSon });
+               output =  new BinOp(tokens.actual.Copy(), new List<Node>() { output });
                tokens.selectNext();
                output.children.Add(parseExpression());
-                return output;
-            } else
-            {
-                throw new Exception("Essa condição não é válida");
-            }    
+            }
+            return output;
         }
 
         public static Node run(string input)
@@ -324,9 +564,11 @@ namespace ConsoleApp1
             Parser.tokens = new Tokenizer() { origin = input, position = 0, actual = new Token() };
             tokens.selectNext();
             Node tree = parseProgram();
+            tree.children.Add(new SubCall(new Token()
+            { value = "Main", type = TokenType.IDENTIFIER }, new List<Node>()));
             if (tokens.actual.type != TokenType.EOF)
             {
-                throw new Exception("Entrada inválida, a cadeia terminou sem um END");
+                throw new Exception("Entrada inválida, a cadeia terminou sem um EOF");
             }
             return tree;
         }

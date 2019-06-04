@@ -48,7 +48,11 @@
     <Compile Include="Assignment.cs" />
     <Compile Include="BinOp.cs" />
     <Compile Include="Bool.cs" />
+    <Compile Include="SubCall.cs" />
     <Compile Include="Identifier.cs" />
+    <Compile Include="FuncDec.cs" />
+    <Compile Include="FuncCall.cs" />
+    <Compile Include="SubDec.cs" />
     <Compile Include="VarDec.cs" />
     <Compile Include="If.cs" />
     <Compile Include="Input.cs" />

@@ -1,6 +1,11 @@
-sub main()
-    print true or true
-    print true or false
-    print false or true
-    print false or false
-end sub
+Sub Main()
+    Dim tb as boolean
+    Dim ti as integer
+
+    tb = TRUE
+    ti = 10
+
+    if tb then
+        print ti + 10
+    end if
+End Sub

@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp1
 {
-    public enum TokenType {
+    public enum TokenType
+    {
         INT,
         PLUS,
         MINUS,
@@ -38,7 +39,10 @@ namespace ConsoleApp1
         BOOL,
         SUB,
         MAIN,
-        BREAKLINE
+        BREAKLINE,
+        CALL,
+        FUNCTION,
+        COMA
     }
 
     public class Token

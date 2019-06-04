@@ -10,6 +10,8 @@ namespace ConsoleApp1
     {
         private Dictionary<string, Object> st;
 
+        public SymbolTable Daddy { get; set; }
+
         public SymbolTable()
         {
             st = new Dictionary<string, Object>();
@@ -24,6 +26,10 @@ namespace ConsoleApp1
             }
             else
             {
+                if(Daddy != null)
+                {
+                    return Daddy.GetValue(key);
+                }
                 throw new Exception("Variável não declarada");
             }
         }
@@ -37,6 +43,10 @@ namespace ConsoleApp1
             }
             else
             {
+                if (Daddy != null)
+                {
+                    return Daddy.GetType(key);
+                }
                 throw new Exception("Variável não declarada");
             }
         }
@@ -50,6 +60,10 @@ namespace ConsoleApp1
                 st[key] = actualValue;
             } else
             {
+                if (Daddy != null)
+                {
+                    Daddy.SetValue(key, value);
+                }
                 throw new Exception("Varíavel não declarada");
             }
         }

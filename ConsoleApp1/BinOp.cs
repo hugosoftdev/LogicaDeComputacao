@@ -38,9 +38,9 @@ namespace ConsoleApp1
             } else if(token.type == TokenType.DIVIDE && ((TokenType)firstNumber.type == TokenType.INT))
             {
                 return new EvaluateReturn() { value = (int)firstNumber.value / (int)secondNumber.value, type = TokenType.INT };
-            } else if (token.type == TokenType.BIGGERTHEN && ((TokenType)firstNumber.type == TokenType.BOOL))
+            } else if (token.type == TokenType.BIGGERTHEN && ((TokenType)firstNumber.type == TokenType.INT))
             {
-                return new EvaluateReturn() { value = (int)firstNumber.value > (int)secondNumber.value, type = TokenType.INT };
+                return new EvaluateReturn() { value = (int)firstNumber.value > (int)secondNumber.value, type = TokenType.BOOL };
             }
             else if (token.type == TokenType.SMALLERTHEN && ((TokenType)firstNumber.type == TokenType.INT))
             {

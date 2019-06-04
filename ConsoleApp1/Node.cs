@@ -16,6 +16,7 @@ namespace ConsoleApp1
     {
         public Object value;
         public List<Node> children;
+        public Node type;
         public abstract EvaluateReturn Evaluate(SymbolTable st); 
     }
 }
