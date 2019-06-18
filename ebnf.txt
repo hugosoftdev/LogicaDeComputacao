@@ -1,0 +1,25 @@
+SubDec = Codigo Ident '(' {(Null | Ident como Type | ',')} ')' '\n' {(Null | Statement '\n')} fim codigo
+
+FuncDec = Bloco Ident '(' {(Null | Ident como Type | ',')} ')' como Type '\n' {(Null | Statement '\n')} fim bloco
+
+Program = {'^' (SubDec | FuncDec)}
+
+Statement = Null, 
+            Ident '=' RelExp,
+            "mostre_me" RelExp,
+            Enquanto RelExp '\n' {(Null | Statemente '\n')} fim_do_loop,
+            Se RelExp entao '\n' {(Null | Statement '\n')} (Null | caso_contrario'\n' {(Null | Statement '\n')}) fim se,
+            criar Ident como Type,
+            chamar Ident '(' {(Null | RelExp | ',')} ')'
+
+RelExp = Expression (Null | ("=" | ">" | "<") Expression)
+
+Expression = Term (Null | {('+'|'-'|'ou') Term })
+
+Term = Factor (Null | {('*'|'/'|'nao') Factor})
+
+Factor = Int,
+         (verdadeiro | falso),
+         ('+'|'-'|'nao') Factor,
+         Ident (Null | '(' {(Null | RelExp | ',')} ')'),
+         entrada
