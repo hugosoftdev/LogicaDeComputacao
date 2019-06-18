@@ -2,6 +2,6 @@
 
 ## Diagrama Sintático
 
-<p align="center">
-  <img src="./diagrama.jpg" title="Diagrama Sintático inicial da calculadora">
-</p>
+### Entrega Final na Branch entrega_final
+
+Todos os testes passaram, qualquer dúvida me contactar.
